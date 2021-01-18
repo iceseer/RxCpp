@@ -50,15 +50,8 @@ class subscriber : public subscriber_base<T>
         template<class U>
         void operator()(U u) {
             trace_activity().on_next_enter(*that, u);
-            RXCPP_TRY {
-                that->destination.on_next(std::move(u));
-                do_unsubscribe = false;
-            } RXCPP_CATCH(...) {
-                auto ex = rxu::current_exception();
-                trace_activity().on_error_enter(*that, ex);
-                that->destination.on_error(std::move(ex));
-                trace_activity().on_error_return(*that);
-            }
+            that->destination.on_next(std::move(u));
+            do_unsubscribe = false;
         }
         const this_type* that;
         volatile bool do_unsubscribe;
